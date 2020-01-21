@@ -10,5 +10,6 @@ CREATE TABLE todos (
 INSERT INTO todos (task, completed)
   VALUES ('Learn react', 'False'),
           ('Take a rest', 'true'),
-          ('Build a nice todo app with react', 'false');
+          ('Build a nice todo app with react', 'false'),
+          ('Say thank you to the Exquis App Factory Inc Team', 'false');
          
