@@ -32,7 +32,7 @@ yarn start<br>
 # Appreciation!
 A big thank you to the Exquis App Factory Team:
 + Mr Segun Abolaji
-+ Mrs Gloria Abolaji
++ Barr. (Mrs) Gloria Abolaji
 + Mr Oladele Joshua Smith
 + and others...
 
