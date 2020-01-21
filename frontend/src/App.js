@@ -1,12 +1,11 @@
 import React, {useState} from 'react';
 import './App.css';
 
-function Todo({todo, index, completeTodo, updateTodo, deleteTodo}){
+function Todo({todo, index, completeTodo, deleteTodo}){
 return <div style={{ textDecoration: todo.isCompleted ? 'line-through' : '' }} className="todo">{todo.task}  
   <div className="todo-action">
-    <button onClick={() => completeTodo(index)}>Complete</button>
-    <button onClick={() => updateTodo(index)}>Edit</button>
-    <button onClick={() => deleteTodo(index)}>Delete</button>
+    <input type="checkbox" className="is-complete" onChange={(e) => completeTodo(index,e.target.checked)} />
+    <button onClick={() => deleteTodo(index)}>x</button>
   </div>
 </div>;
 }
@@ -28,25 +27,10 @@ function TodoForm({addTodo}){
     </form>
   );
 }
-function EditTodoForm({addTodo}){
-  const [value, setValue] = useState('');
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    if(!value) return;
-    addTodo(value);
-    setValue('');
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" className="input" placeholder="new todo here"  value={value} onChange={e => setValue(e.target.value)} />
-      <input type="submit" value="Add Todo" />
-    </form>
-  );
-}
 
 function App() {
+  
 const [todos, setTodos] = useState([
   {
     task: 'Learn about React',
@@ -67,17 +51,12 @@ const addTodo = task => {
   setTodos(NewTodos);
 };
   
-const completeTodo = index => {
+const completeTodo = (index, isCompleted) => {
   const NewTodos = [...todos];
-  NewTodos[index].isCompleted = true;
+  NewTodos[index].isCompleted = isCompleted;
   setTodos(NewTodos);
 };
 
-const updateTodo = (index, task) => {
-  const NewTodos = [...todos];
-  NewTodos[index].task = task;
-  setTodos(NewTodos);
-};
 const deleteTodo = index => {
   const NewTodos = [...todos];
   NewTodos.splice(index, 1);
@@ -93,7 +72,7 @@ const deleteTodo = index => {
           Exquis Todo App 
         </h1>
         <div className="todo-list">
-           {todos.map((todo, index) => <Todo key={index} index={index} todo={todo} completeTodo={completeTodo} updateTodo={updateTodo} deleteTodo={deleteTodo} />)}
+           {todos.map((todo, index) => <Todo key={index} index={index} todo={todo} completeTodo={completeTodo}  deleteTodo={deleteTodo} />)}
         </div> 
         <TodoForm addTodo={addTodo} />
     </div>
