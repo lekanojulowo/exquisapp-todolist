@@ -1,10 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import './App.css';
 
+const APIURL = `http://localhost:5000`;
+
 function Todo({todo, index, completeTodo, deleteTodo}){
-return <div style={{ textDecoration: todo.isCompleted ? 'line-through' : '' }} className="todo">{todo.task}  
+return <div style={{ textDecoration: todo.completed ? 'line-through' : '' }} className="todo">{todo.task}  
   <div className="todo-action">
-    <input type="checkbox" className="is-complete" onChange={(e) => completeTodo(index,e.target.checked)} />
+    <input type="checkbox" className="is-complete" checked={todo.completed} onChange={(e) => completeTodo(index,e.target.checked)} />
     <button onClick={() => deleteTodo(index)}>x</button>
   </div>
 </div>;
@@ -30,38 +32,79 @@ function TodoForm({addTodo}){
 
 
 function App() {
-  
-const [todos, setTodos] = useState([
-  {
-    task: 'Learn about React',
-    isCompleted:false
-  },
-  {
-    task: 'Take a rest',
-    isCompleted:true
-  },
-  {
-    task: 'Build a really nice todo app with react',
-    isCompleted:false
-  }
-])
 
-const addTodo = task => {
-  const NewTodos = [...todos, {task}];
-  setTodos(NewTodos);
-};
+const [todos, setTodos] = useState([]);
+
+async function fetchTodos() {
+      const res = await fetch(`${APIURL}`);
+      res
+        .json()
+        .then(result => {
+        setTodos(result.data);
+         console.log(result.data)
+        })
+        .catch(err => console.log(err));
+    }
+
+useEffect(() => { 
+  fetchTodos();
+}, []);
+
+const addTodo = async task => {
+  const res = await fetch(`${APIURL}/`, {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({task})
+          });
+          res
+            .json()
+            .then(result => {
+              if(result) fetchTodos();
+            })
+            .catch(err => console.log(err));
+}
   
-const completeTodo = (index, isCompleted) => {
+const completeTodo = async (index, completed ) => {
   const NewTodos = [...todos];
-  NewTodos[index].isCompleted = isCompleted;
-  setTodos(NewTodos);
+  const data = NewTodos[index];
+
+  const res = await fetch(`${APIURL}/${data.id}`, {
+            method: "PATCH",
+            mode: "cors",
+            cache: "no-cache",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({completed})
+          });
+          res
+            .json()
+            .then(result => {
+              if(result) fetchTodos();
+            })
+            .catch(err => console.log(err));;
 };
 
-const deleteTodo = index => {
+const deleteTodo = async index => {
   const NewTodos = [...todos];
-  NewTodos.splice(index, 1);
-  setTodos(NewTodos);
-};
+   const data = NewTodos[index];
+   const res = await fetch(`${APIURL}/${data.id}`, {
+    method: "DELETE",
+    mode: "cors",
+    cache: "no-cache"
+  });
+
+  res
+  .json()
+  .then(result => {
+  if(result) fetchTodos();
+  })
+  .catch(err => console.log(err));
+}
 
 
 

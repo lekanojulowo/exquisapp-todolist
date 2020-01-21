@@ -1,23 +1,12 @@
 var express = require('express');
 var router = express.Router();
+var todo  = require('../todo.js');
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  const todos = [
-    {
-      task: 'Learn about React',
-      isCompleted:false
-    },
-    {
-      task: 'Take a rest',
-      isCompleted:true
-    },
-    {
-      task: 'Build a really nice todo app with react',
-      isCompleted:false
-    }
-  ]
-  res.json({ data: todos });
-});
+
+router.get('/', todo.getAllTodos);
+router.get('/:id', todo.getSingleTodo);
+router.post('/', todo.createTodo);
+router.patch('/:id', todo.updateTodo);
+router.delete('/:id', todo.deleteTodo);
 
 module.exports = router;

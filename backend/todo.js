@@ -5,7 +5,7 @@ const table= 'todos';
 
 // Get fetch all todos
 const getAllTodos = (req, res, next) => {
-  db.any(`select * from ${table}`)
+  db.any(`select * from ${table} order by id asc`)
     .then((data) => {
       res.status(200)
         .json({
@@ -40,34 +40,30 @@ const createTodo = (req, res, next) => {
     const values = [task];
     db.one(`insert into ${table}(task) values($1) returning id`, [...values])  
       .then((data) => {
-        const {id} = data;               
-        
+                    
           res.status(200)
           .json({
             status: 'success',
             data: {
-              message: 'Todo successfully created',
-              id
+              message: 'Todo successfully created'
             }
-
           });
     })
           .catch((err) => {
         return next(err);    
+})
 }
   
-  // PATCH Edit Todo
+  // PUT OR PATCH Edit Todo
   const updateTodo = (req, res, next) => {
-    db.none(`update ${tableA} set completed=$1`,
-    [req.body.isComplete])
+    db.none(`update ${table} set completed=$1 where id=$2`,
+    [req.body.completed, parseInt(req.params.id)])
       .then(() => {
         res.status(200)
         .json({
           status: 'success',
           data: {
-            message: 'Todo successfully updated',
-            title,
-            article
+            message: 'Todo successfully updated'
           }
         });
       })
@@ -80,7 +76,7 @@ const createTodo = (req, res, next) => {
     
     // DELETE delete Todo
     const deleteTodo = (req, res, next) => {      
-      db.none(`delete from ${tableA} where id = $1`, [parseInt(req.params.id)])
+      db.none(`delete from ${table} where id = $1`, [parseInt(req.params.id)])
       .then(() => {
         res.status(200)
         .json({
@@ -93,17 +89,13 @@ const createTodo = (req, res, next) => {
       .catch((err) => {
         return next(err);
       });
-    });
-  }
-    
-    
+  }  
     
 module.exports = {
   getAllTodos,
   getSingleTodo,
   createTodo,
   updateTodo,
-  deleteTodo,
- 
+  deleteTodo 
 };
 
